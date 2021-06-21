@@ -23,7 +23,7 @@ client.connect(err => {
   console.log('connection error', err);
   const employersCollection = client.db("jobCompanion").collection("employers");
   const jobsCollection = client.db("jobCompanion").collection("jobs");
-
+  const adminCollection = client.db("jobCompanion").collection("admins");
   console.log('Database Connected Successfully');
   // perform actions on the collection object
 
@@ -61,6 +61,33 @@ app.post('/isEmployer', (req, res) => {
       res.send(items.length>0)
     })
 })
+
+app.post('/addAdmin', (req, res) => {
+  const newAdmin = req.body;
+  console.log('new Service', newAdmin);
+  adminCollection.insertOne(newAdmin)
+      .then(result => {
+          console.log('insertedCount', result);
+          res.send(result)
+      })
+})
+
+app.post('/isAdmin', (req, res) => {
+  const email = req.body.email;
+  console.log('new Service', email);
+  adminCollection.find({email:email})
+  .toArray((err,items)=>{
+      res.send(items.length>0)
+    })
+})
+
+app.get('/allJobs',(req,res) => {
+  jobsCollection.find({})
+  .toArray((err,items)=>{
+      res.send(items)
+  })
+})
+
 
   //client.close();
 });
